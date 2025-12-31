@@ -76,6 +76,10 @@ GitHubのファイルサイズ制限のため、学習済みモデルは外部�
 
 https://drive.google.com/drive/folders/1MweaBHzv5CL1xOCG2tLy64340vWuZ02s?usp=drive_link
 
+※ Google Drive では、サイズの大きいバイナリファイルに対して  
+「ウイルススキャン可能な上限サイズを超えています」という警告が表示される場合があります。  
+これは Google Drive の仕様によるものであり、ファイル自体の危険性を示すものではありません。
+
 
 ## ⑥ スクリプトの実行
 classify.pyと同じディレクトリ内にとanime_real_model.kerasを置き、以下を実行します。
