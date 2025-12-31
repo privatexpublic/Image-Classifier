@@ -26,7 +26,7 @@ def classify_and_sort(folder_path):
 
             pred = model.predict(arr)[0][0]
 
-            #数字変更により自身のない画像をどうするか調節可能
+            #数字変更により自信のない画像をどうするか調節可能
             if pred >= 0.7:
                 shutil.move(path, os.path.join(real_dir, file))
             elif pred <= 0.3:
@@ -37,4 +37,5 @@ def classify_and_sort(folder_path):
 
 # 整理したい写真が入っているフォルダのパス
 folder = r"C:\Users\・・・"
+
 classify_and_sort(folder)
