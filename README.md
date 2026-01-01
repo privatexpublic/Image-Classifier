@@ -64,8 +64,8 @@ pip install numpy tensorflow pillow opencv-python scikit-learn matplotlib
 
 
 ## ④ 分類スクリプトの作成
-作業フォルダで VS Code を起動しclassify.pyを作成するため以下を実行します。  
-コードはアップロードされているclassify.pyを参照してください。
+作業フォルダで VS Code を起動し`classify.py`を作成するため以下を実行します。  
+コードはアップロードされている`classify.py`を参照し、環境に合わせてパスを変更してください。
 ```sh
 code classify.py　（メモ帳を使う場合はnotepad classify.pyでもよい）
 ```
@@ -82,7 +82,7 @@ https://drive.google.com/drive/folders/1MweaBHzv5CL1xOCG2tLy64340vWuZ02s?usp=dri
 
 
 ## ⑥ スクリプトの実行
-classify.pyと同じディレクトリ内にanime_real_model.kerasを置き、以下を実行します。
+`classify.py`と同じディレクトリ内に `anime_real_model.keras`を置き、以下を実行します。
 ```sh
 python classify.py
 ```
@@ -90,89 +90,38 @@ python classify.py
 
 <br>
 
-以上により、任意のフォルダ内の画像がrealとanimeとunsureファイルに分かれます。
+以上により、任意のフォルダ内の画像が `real` と `anime` フォルダに分けられます。  
+確信度が低い画像は `unsure` フォルダに分類されます。
 
 
 
 <br>
 <br>
 
-# 分類をカスタムしたい場合(anime_real_model.kerasの変更）
+## 分類をカスタムしたい場合(anime_real_model.kerasの変更）
 
 ## ①データセット構成
-Google Driveを以下の構成にし、realとanime内に分類したいパターンに分けて写真を入れます。（最低10枚は必要）
+Google Driveを以下の構成にし、`real`と`anime`内に分類したいパターンごとに画像を入れます。（最低10枚は必要）  
+`unlabeled` は アクティブラーニング用の未分類画像を配置するためのフォルダです。  
+今回の手順ではこの工程を省略し、用意した画像をすべて `real` と `anime` に入れても問題ありません。  
+
 ```sh
 MyDrive/
  └─ dataset/
-     ├─ real/
-     └─ anime/
+     ├─ labeled/
+     │   ├─ real/
+     │   └─ anime/
+     └─ unlabeled/
 ```
 
 
 
 ## ②KERASファイルを作成
+学習用の Google Colab ノートを以下で公開しています。  
+リンク先のノートを上から順に実行してください。  
 任意の場所で新しいGoogle Colabノートを作成し、それぞれコードを実行していきます。  
-  
-以下はGoogle Drive をマウントするためのコードです。
-```python
-from google.colab import drive
-drive.mount('/content/drive')
-```
 
-以下はデータセット構成のdatasetにアクセスするためのコードです。
-```python
-data_dir = "/content/drive/MyDrive/dataset"
-```
-
-以下はモデル作成コードです。
-```python
-import tensorflow as tf
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-
-datagen = ImageDataGenerator(
-    rescale=1./255,
-    validation_split=0.2
-)
-
-train_gen = datagen.flow_from_directory(
-    data_dir,
-    target_size=(128, 128),
-    batch_size=32,
-    class_mode='binary',
-    subset='training'
-)
-
-val_gen = datagen.flow_from_directory(
-    data_dir,
-    target_size=(128, 128),
-    batch_size=32,
-    class_mode='binary',
-    subset='validation'
-)
-
-model = tf.keras.Sequential([
-    tf.keras.layers.Input(shape=(128,128,3)),
-    tf.keras.layers.Conv2D(32, 3, activation='relu'),
-    tf.keras.layers.MaxPooling2D(),
-    tf.keras.layers.Conv2D(64, 3, activation='relu'),
-    tf.keras.layers.MaxPooling2D(),
-    tf.keras.layers.Flatten(),
-    tf.keras.layers.Dense(64, activation='relu'),
-    tf.keras.layers.Dense(1, activation='sigmoid')
-])
-
-model.compile(
-    optimizer='adam',
-    loss='binary_crossentropy',
-    metrics=['accuracy']
-)
-
-model.fit(train_gen, validation_data=val_gen, epochs=10)
-```
-以下は学習したモデルを指定したパスにファイルとして保存するためのコードです。
-```python
-model.save("/content/drive/MyDrive/anime_real_model.keras")
-```
+https://colab.research.google.com/drive/10bYzTj9edPQxQW4YtpHHBMvfRfDyCC0y?usp=drive_link
 <br>
 <br>
-最後にanime_real_model.kerasをダウンロードし、classify.pyと同じディレクトリに入れて完了です。
+最後にanime_real_model.kerasをダウンロードし、classify.pyと同じローカルディレクトリに入れて完了です。
